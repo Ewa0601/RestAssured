@@ -7,6 +7,7 @@ import pl.javastart.main.pojo.Tag;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertTrue;
@@ -39,9 +40,19 @@ public class QueryParamsTests {
         Pet[] soldPets = given().log().all().body(pet).contentType("application/json")
                 .queryParam("status", "sold")
                 .when().get("https://swaggerpetstore.przyklady.javastart.pl/v2/pet/findByStatus")
-                .then().log().all().statusCode(200).extract().as(Pet[].class);
+                .then().log().all().statusCode(200)
+                .extract().as(Pet[].class);
 
         assertTrue(Arrays.asList(soldPets).size() > 0, "List of pets");
+
+        //powyższy kod przy użyciu JsonPath
+        List<Pet> pets = given().log().all().body(pet).contentType("application/json")
+                .queryParam("status", "sold")
+                .when().get("https://swaggerpetstore.przyklady.javastart.pl/v2/pet/findByStatus")
+                .then().log().all().statusCode(200)
+                .extract().jsonPath().getList("", Pet.class);
+
+        assertTrue(pets.size() > 0, "List of pets");
 
     }
 
