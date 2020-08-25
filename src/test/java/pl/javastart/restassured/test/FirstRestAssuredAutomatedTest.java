@@ -11,7 +11,8 @@ public class FirstRestAssuredAutomatedTest {
 
     @Test
     public void givenNonExistingPetIdWhenGetPetThenPetNotFoundTest() {
-        given().when().get("https://swaggerpetstore.przyklady.javastart.pl/v2/pet/0").then().statusCode(404);
+        given().when().get("https://swaggerpetstore.przyklady.javastart.pl/v2/pet/{param}", 0)
+                .then().statusCode(404);
 
         // Metoda given() tworzy specyfikację żądania  - Request Specification
         RequestSpecification given = given();
