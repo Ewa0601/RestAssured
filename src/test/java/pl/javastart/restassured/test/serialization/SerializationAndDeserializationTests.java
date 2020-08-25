@@ -46,4 +46,44 @@ public class SerializationAndDeserializationTests {
         assertEquals(actualPet.getStatus(), pet.getStatus(), "Pet status");
     }
 
+    @Test
+    public void givenExistingPetIdWhenGetPetThenReturnPetTest() {
+
+        Category category = new Category();
+        category.setId(1);
+        category.setName("dogs");
+
+        Tag tag = new Tag();
+        tag.setId(1);
+        tag.setName("dogs-category");
+
+        Pet pet = new Pet();
+        pet.setId(123);
+        pet.setName("Burek");
+        pet.setCategory(category);
+        pet.setPhotoUrls(Collections.singletonList("http://photos.com/dog1.jpg"));
+        pet.setTags(Collections.singletonList(tag));
+        pet.setStatus("available");
+
+        given().log().all().contentType("application/json").body(pet)
+                .when().post("https://swaggerpetstore.przyklady.javastart.pl/v2/pet")
+                .then().log().all().statusCode(200);
+
+        Pet actualPet = given().log().method().log().uri()
+                .pathParam("petId", pet.getId())
+                .when().get("https://swaggerpetstore.przyklady.javastart.pl/v2/pet/{petId}")
+                .then().log().all().statusCode(200)
+                .extract().as(Pet.class);
+
+        assertEquals(actualPet.getId(), pet.getId(), "Pet ID");
+        assertEquals(actualPet.getCategory().getId(), pet.getCategory().getId(), "Category ID");
+        assertEquals(actualPet.getCategory().getName(), pet.getCategory().getName(), "Category name");
+        assertEquals(actualPet.getName(), pet.getName(), "Pet name");
+        assertEquals(actualPet.getPhotoUrls().get(0), pet.getPhotoUrls().get(0), "Photo URL");
+        assertEquals(actualPet.getTags().get(0).getId(), pet.getTags().get(0).getId(), "Pet tag ID");
+        assertEquals(actualPet.getTags().get(0).getName(), pet.getTags().get(0).getName(), "Pet tag name");
+        assertEquals(actualPet.getStatus(), pet.getStatus(), "Pet status");
+
+    }
+
 }
